@@ -124,3 +124,4 @@ Tests cover:
 
 ## 📄 License
 Proprietary software for UniSkill Career Acceleration Platform.
+
