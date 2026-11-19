@@ -102,9 +102,6 @@ The platform provides role-based access control (RBAC):
 - **Candidate / Student**: Access to the ATS Resume Scanner, real-time scoring, history comparison, and official PDF report generation.
 - **Administrator**: Dedicated management of the centralized keyword dictionary, job roles, scoring weight configuration, and platform users. Admin accounts are provisioned securely via administrative seed scripts or environment variables.
 
-For testing candidate functionality, demo candidate access is available:
-- **Demo Candidate**: `student@uniskill.in` / `student123`
-
 ---
 
 ## 🧪 Testing
