@@ -41,14 +41,13 @@ export const ThemeProvider = ({ children }) => {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => {
-      const next = prev === 'dark' ? 'light' : 'dark';
-      try {
-        localStorage.setItem('uniskill_theme', next);
-      } catch (e) {}
-      applyThemeToDOM(next);
-      return next;
-    });
+    const isCurrentlyDark = document.documentElement.classList.contains('dark') || theme === 'dark';
+    const nextTheme = isCurrentlyDark ? 'light' : 'dark';
+    applyThemeToDOM(nextTheme);
+    try {
+      localStorage.setItem('uniskill_theme', nextTheme);
+    } catch (e) {}
+    setTheme(nextTheme);
   };
 
   return (
@@ -59,5 +58,3 @@ export const ThemeProvider = ({ children }) => {
 };
 
 export const useTheme = () => useContext(ThemeContext);
-
-
