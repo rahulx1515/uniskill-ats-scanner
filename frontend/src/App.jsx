@@ -7,6 +7,7 @@ import { ResultsPage } from './pages/ResultsPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { AdminPage } from './pages/AdminPage';
 import { LoginPage } from './pages/LoginPage';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Loader2, Menu, Sun, Moon } from 'lucide-react';
 
 function App() {
@@ -140,7 +141,9 @@ function App() {
 
         {/* Main Body */}
         <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {renderPage()}
+          <ErrorBoundary>
+            {renderPage()}
+          </ErrorBoundary>
         </main>
 
         {/* Footer */}

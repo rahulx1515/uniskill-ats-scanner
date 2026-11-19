@@ -11,10 +11,13 @@ const CATEGORY_META = {
 };
 
 export const ScoreBreakdown = ({ categoryScores = {}, weights = {} }) => {
+  const scores = categoryScores || {};
+  const w = weights || {};
+
   return (
     <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm space-y-4">
       <div>
-        <h3 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
           Evaluation Breakdown
         </h3>
         <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
@@ -24,8 +27,8 @@ export const ScoreBreakdown = ({ categoryScores = {}, weights = {} }) => {
 
       <div className="space-y-3">
         {Object.entries(CATEGORY_META).map(([key, meta]) => {
-          const rawScore = categoryScores[key] || 0;
-          const weight = weights[key] || 0;
+          const rawScore = typeof scores[key] === 'number' ? scores[key] : 0;
+          const weight = typeof w[key] === 'number' ? w[key] : 0;
           const earned = rawScore * weight;
           const percent = Math.min(100, Math.round(rawScore * 100));
 
