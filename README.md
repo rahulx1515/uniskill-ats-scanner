@@ -96,12 +96,14 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
-## 🔑 Default Credentials
+## 🔐 Authentication & Roles
 
-| Role | Email / ID | Password | Access Capabilities |
-| :--- | :--- | :--- | :--- |
-| **Administrator** | `rahul@uniskill.in` | `1234567890` | Full platform control, ATS Scanner, Admin Keyword DB, Weights, Add/Delete Admins |
-| **Candidate / Student** | `student@uniskill.in` | `student123` | ATS Scanner, Report Generation, History Comparison |
+The platform provides role-based access control (RBAC):
+- **Candidate / Student**: Access to the ATS Resume Scanner, real-time scoring, history comparison, and official PDF report generation.
+- **Administrator**: Dedicated management of the centralized keyword dictionary, job roles, scoring weight configuration, and platform users. Admin accounts are provisioned securely via administrative seed scripts or environment variables.
+
+For testing candidate functionality, demo candidate access is available:
+- **Demo Candidate**: `student@uniskill.in` / `student123`
 
 ---
 

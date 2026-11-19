@@ -141,36 +141,16 @@ export const LoginPage = () => {
             </button>
           </form>
 
-          {/* Quick Demo Access */}
-          <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 space-y-2">
-            <p className="text-[11px] font-medium text-slate-400 dark:text-zinc-500 text-center uppercase tracking-wider">
-              Demo Accounts
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => fillCredentials('rahul@uniskill.in', '1234567890')}
-                className="flex flex-col items-start p-2 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/60 text-left transition"
-              >
-                <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 flex items-center space-x-1">
-                  <Shield className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-                  <span>Admin</span>
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-zinc-400 truncate w-full mt-0.5">rahul@uniskill.in</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillCredentials('student@uniskill.in', 'student123')}
-                className="flex flex-col items-start p-2 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/60 text-left transition"
-              >
-                <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 flex items-center space-x-1">
-                  <User className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-                  <span>Student</span>
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-zinc-400 truncate w-full mt-0.5">student@uniskill.in</span>
-              </button>
-            </div>
+          {/* Quick Demo Access for Candidates */}
+          <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 text-center">
+            <button
+              type="button"
+              onClick={() => fillCredentials('student@uniskill.in', 'student123')}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 text-xs font-medium text-slate-600 dark:text-zinc-400 transition cursor-pointer"
+            >
+              <User className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+              <span>Fill Candidate Demo (student@uniskill.in)</span>
+            </button>
           </div>
         </div>
 
