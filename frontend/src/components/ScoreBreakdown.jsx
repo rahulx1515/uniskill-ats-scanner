@@ -1,102 +1,49 @@
 import React from 'react';
-import { CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react';
+
+const CATEGORY_META = {
+  required_skills: { label: 'Required Technical Skills', desc: 'Core mandatory competencies for the target role' },
+  preferred_skills: { label: 'Preferred & Bonus Skills', desc: 'Secondary qualifications and tools' },
+  keyword_relevance: { label: 'Keyword Density & Match', desc: 'Coverage of role-specific ATS keywords' },
+  experience_relevance: { label: 'Experience Alignment', desc: 'Relevance of detected job titles & experience length' },
+  education_relevance: { label: 'Education Alignment', desc: 'Degree, field of study, and academic background' },
+  project_relevance: { label: 'Project Portfolio', desc: 'Technical projects and implementation depth' },
+  formatting: { label: 'Document Structure & Sections', desc: 'Header clarity, section organization, and readability' }
+};
 
 export const ScoreBreakdown = ({ categoryScores = {}, weights = {} }) => {
-  const categories = [
-    {
-      key: 'required_skills',
-      title: 'Required Skills Match',
-      weight: weights.required_skills ?? 0.30,
-      score: categoryScores.required_skills ?? 0.0,
-      desc: 'Mandatory technical skills and languages from centralized database.'
-    },
-    {
-      key: 'preferred_skills',
-      title: 'Preferred Skills Match',
-      weight: weights.preferred_skills ?? 0.10,
-      score: categoryScores.preferred_skills ?? 0.10,
-      desc: 'Secondary and nice-to-have tools that enhance candidacy.'
-    },
-    {
-      key: 'keyword_relevance',
-      title: 'Keyword Density & Coverage',
-      weight: weights.keyword_relevance ?? 0.20,
-      score: categoryScores.keyword_relevance ?? 0.0,
-      desc: 'Total percentage of role-specific keywords indexed across text.'
-    },
-    {
-      key: 'experience_relevance',
-      title: 'Experience Semantic Match',
-      weight: weights.experience_relevance ?? 0.15,
-      score: categoryScores.experience_relevance ?? 0.0,
-      desc: 'Contextual similarity of work history to role responsibilities.'
-    },
-    {
-      key: 'education_relevance',
-      title: 'Education & Degree Match',
-      weight: weights.education_relevance ?? 0.10,
-      score: categoryScores.education_relevance ?? 0.0,
-      desc: 'Alignment with target academic qualification requirements.'
-    },
-    {
-      key: 'project_relevance',
-      title: 'Projects & Tech Depth',
-      weight: weights.project_relevance ?? 0.10,
-      score: categoryScores.project_relevance ?? 0.0,
-      desc: 'Technical stack application inside personal and academic projects.'
-    },
-    {
-      key: 'formatting',
-      title: 'ATS Formatting & Structure',
-      weight: weights.formatting ?? 0.05,
-      score: categoryScores.formatting ?? 0.0,
-      desc: 'Section headings, contact details, word count, and bullet metrics.'
-    }
-  ];
-
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-          7-Dimension ATS Scoring Breakdown
+    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm space-y-4">
+      <div>
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+          Evaluation Breakdown
         </h3>
-        <span className="text-xs text-slate-400 font-medium">Configurable Weights</span>
+        <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+          Weighted contribution across 7 assessment dimensions
+        </p>
       </div>
 
-      <div className="space-y-3.5">
-        {categories.map((cat) => {
-          const scorePercent = Math.round(cat.score * 100);
-          const earnedPoints = (cat.weight * cat.score * 100).toFixed(1);
-          const maxPoints = Math.round(cat.weight * 100);
-
-          let barColor = 'bg-rose-500';
-          if (scorePercent >= 75) barColor = 'bg-emerald-500';
-          else if (scorePercent >= 50) barColor = 'bg-amber-500';
+      <div className="space-y-3">
+        {Object.entries(CATEGORY_META).map(([key, meta]) => {
+          const rawScore = categoryScores[key] || 0;
+          const weight = weights[key] || 0;
+          const earned = rawScore * weight;
+          const percent = Math.min(100, Math.round(rawScore * 100));
 
           return (
-            <div key={cat.key} className="space-y-1.5">
+            <div key={key} className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <div>
-                  <span className="font-semibold text-slate-200">{cat.title}</span>
-                  <span className="text-[11px] text-slate-400 ml-2">({maxPoints}% Weight)</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-bold text-white">{earnedPoints} / {maxPoints} pts</span>
-                  <span className="text-slate-400 font-mono text-[11px]">({scorePercent}%)</span>
-                </div>
+                <span className="font-medium text-slate-800 dark:text-zinc-200">{meta.label}</span>
+                <span className="text-slate-500 dark:text-zinc-400 font-mono text-[11px]">
+                  {earned.toFixed(1)} / {(weight * 100).toFixed(0)} pts
+                </span>
               </div>
 
-              {/* Progress Bar */}
-              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-2 w-full bg-slate-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                 <div
-                  className={`h-full ${barColor} transition-all duration-700 rounded-full`}
-                  style={{ width: `${Math.max(4, scorePercent)}%` }}
+                  className="h-full bg-blue-600 dark:bg-blue-500 rounded-full transition-all duration-500"
+                  style={{ width: `${percent}%` }}
                 />
               </div>
-
-              <p className="text-[11px] text-slate-400 leading-tight">
-                {cat.desc}
-              </p>
             </div>
           );
         })}
@@ -104,4 +51,3 @@ export const ScoreBreakdown = ({ categoryScores = {}, weights = {} }) => {
     </div>
   );
 };
-

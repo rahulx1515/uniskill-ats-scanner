@@ -7,11 +7,11 @@ import { ResultsPage } from './pages/ResultsPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { AdminPage } from './pages/AdminPage';
 import { LoginPage } from './pages/LoginPage';
-import { Loader2, Sparkles, Menu, Server, Shield } from 'lucide-react';
+import { Loader2, Menu, Sun, Moon } from 'lucide-react';
 
 function App() {
   const { user, loading, isAdmin } = useAuth();
-  const { isDark } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   const [currentTab, setCurrentTab] = useState('scanner');
   const [analysisResult, setAnalysisResult] = useState(null);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -33,17 +33,14 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#071330] flex flex-col items-center justify-center space-y-4">
-        <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center shadow-xl shadow-indigo-500/30 animate-pulse">
-          <Sparkles className="h-7 w-7 text-white" />
-        </div>
-        <Loader2 className="h-5 w-5 text-indigo-400 animate-spin" />
-        <p className="text-sm text-slate-300 font-medium">Initializing UniSkill ATS Pro...</p>
+      <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex flex-col items-center justify-center space-y-3">
+        <Loader2 className="h-6 w-6 text-blue-600 dark:text-blue-400 animate-spin" />
+        <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Loading UniSkill ATS...</p>
       </div>
     );
   }
 
-  // If not authenticated, show unified login page
+  // If not authenticated, show clean login page
   if (!user) {
     return <LoginPage />;
   }
@@ -63,20 +60,15 @@ function App() {
     }
   };
 
-  // Background: Deep Royal/Navy Blue canvas
-  const mainBg = isDark
-    ? 'bg-gradient-to-br from-[#06122d] via-[#08183a] to-[#040c1e] text-slate-100'
-    : 'bg-gradient-to-br from-[#0a1c44] via-[#0d2252] to-[#071536] text-white';
-
   const tabTitle = {
-    scanner: 'ATS Resume Compatibility Scanner',
-    results: 'ATS Score & Diagnostics',
-    history: 'Candidate Analysis History',
-    admin: 'Centralized Keyword & Role Database'
-  }[currentTab] || 'ATS Scanner';
+    scanner: 'Resume Scanner',
+    results: 'Analysis Report',
+    history: 'Candidate History',
+    admin: 'Keyword Database & Roles'
+  }[currentTab] || 'Resume Scanner';
 
   return (
-    <div className={`min-h-screen flex ${mainBg}`}>
+    <div className="min-h-screen flex bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100">
       {/* Sidebar Navigation */}
       <Sidebar
         currentTab={currentTab}
@@ -89,62 +81,67 @@ function App() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-72">
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 h-16 border-b border-white/10 bg-[#071330]/85 backdrop-blur-md px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <header className="sticky top-0 z-30 h-16 border-b border-slate-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setMobileSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition"
+              className="lg:hidden p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition"
               title="Open Navigation"
             >
               <Menu className="h-5 w-5" />
             </button>
             <div>
-              <h2 className="text-sm sm:text-base font-extrabold text-white tracking-tight flex items-center space-x-2">
-                <span>{tabTitle}</span>
-              </h2>
-              <p className="text-[10px] text-slate-400 font-medium hidden sm:block">
-                UniSkill AI-Powered ATS Resume Intelligence Engine
-              </p>
+              <h1 className="text-base font-semibold text-slate-900 dark:text-white tracking-tight">
+                {tabTitle}
+              </h1>
             </div>
           </div>
 
           {/* Quick status & profile pill */}
-          <div className="flex items-center space-x-3">
-            <div className="hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-[11px] font-semibold">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Redis Load Balancer</span>
-            </div>
+          <div className="flex items-center space-x-2.5">
+            <button
+              onClick={toggleTheme}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition flex items-center space-x-1.5 text-xs font-medium shadow-xs"
+            >
+              {isDark ? (
+                <>
+                  <Sun className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="hidden sm:inline">Light Mode</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="h-3.5 w-3.5 text-slate-600" />
+                  <span className="hidden sm:inline">Dark Mode</span>
+                </>
+              )}
+            </button>
 
-            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs">
-              <div className={`h-6 w-6 rounded-lg flex items-center justify-center font-bold text-xs ${
-                isAdmin ? 'bg-purple-500/20 text-purple-300' : 'bg-indigo-500/20 text-indigo-300'
-              }`}>
-                {user?.full_name ? user.full_name[0].toUpperCase() : 'U'}
-              </div>
-              <span className="font-semibold text-white text-xs max-w-[120px] truncate hidden md:inline">
+            <div className="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs">
+              <span className="font-medium text-slate-800 dark:text-zinc-200 hidden sm:inline">
                 {user?.full_name}
               </span>
-              <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded ${
-                isAdmin ? 'bg-purple-500/20 text-purple-300' : 'bg-slate-700 text-slate-300'
+              <span className={`text-[10px] font-semibold px-1.5 py-0.2 rounded ${
+                isAdmin
+                  ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300'
+                  : 'bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-zinc-300'
               }`}>
-                {user?.role}
+                {user?.role === 'admin' ? 'Admin' : 'Student'}
               </span>
             </div>
           </div>
         </header>
 
         {/* Main Body */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {renderPage()}
         </main>
 
         {/* Footer */}
-        <footer className="border-t border-white/10 py-6 text-center text-[11px] text-slate-400 bg-black/20">
-          <p>
-            UniSkill ATS Pro &bull; AI-Powered Career Intelligence Platform &bull; Connected to Redis Distributed Cache
-          </p>
+        <footer className="border-t border-slate-200 dark:border-zinc-800/80 py-5 text-center text-xs text-slate-500 dark:text-zinc-500">
+          <p>UniSkill ATS &bull; Internal Platform &bull; Scores are estimates and do not guarantee hiring selection.</p>
         </footer>
       </div>
     </div>

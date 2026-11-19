@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, FileText, CheckCircle2, AlertTriangle, X, RefreshCw } from 'lucide-react';
+import { Upload, FileText, X, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { atsService } from '../services/api';
 
 export const FileUpload = ({ onUploadSuccess, uploadedResume, onReset }) => {
@@ -36,22 +36,20 @@ export const FileUpload = ({ onUploadSuccess, uploadedResume, onReset }) => {
   const processFile = async (file) => {
     setError(null);
 
-    // Validate extension
     const ext = '.' + file.name.split('.').pop().toLowerCase();
     if (!['.pdf', '.docx'].includes(ext)) {
-      setError(`Invalid file type '${ext}'. Please upload a PDF (.pdf) or Word document (.docx).`);
+      setError(`Unsupported format '${ext}'. Please upload a PDF (.pdf) or Word (.docx) file.`);
       return;
     }
 
-    // Validate size (10MB)
     if (file.size > 10 * 1024 * 1024) {
-      setError('File size exceeds 10MB limit. Please upload a smaller resume file.');
+      setError('File size exceeds 10MB limit.');
       return;
     }
 
     try {
       setUploading(true);
-      setProgress(10);
+      setProgress(15);
       const res = await atsService.uploadResume(file, (percent) => {
         setProgress(Math.min(95, percent));
       });
@@ -59,7 +57,7 @@ export const FileUpload = ({ onUploadSuccess, uploadedResume, onReset }) => {
       onUploadSuccess(res);
     } catch (err) {
       console.error("Upload error:", err);
-      const msg = err.response?.data?.detail || 'Failed to upload and parse resume. Please try again.';
+      const msg = err.response?.data?.detail || 'Failed to upload and parse resume.';
       setError(msg);
     } finally {
       setUploading(false);
@@ -74,10 +72,10 @@ export const FileUpload = ({ onUploadSuccess, uploadedResume, onReset }) => {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={() => !uploading && fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition relative overflow-hidden ${
+          className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition ${
             isDragging
-              ? 'border-indigo-500 bg-indigo-500/10 scale-[1.01]'
-              : 'border-slate-700/80 bg-slate-900/50 hover:bg-slate-900/80 hover:border-slate-600'
+              ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20'
+              : 'border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/60 hover:bg-slate-50 dark:hover:bg-zinc-800/40'
           }`}
         >
           <input
@@ -88,106 +86,69 @@ export const FileUpload = ({ onUploadSuccess, uploadedResume, onReset }) => {
             className="hidden"
           />
 
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="h-16 w-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition">
+          <div className="flex flex-col items-center justify-center space-y-3">
+            <div className="h-12 w-12 rounded-lg bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               {uploading ? (
-                <RefreshCw className="h-8 w-8 animate-spin text-indigo-400" />
+                <RefreshCw className="h-6 w-6 animate-spin" />
               ) : (
-                <Upload className="h-8 w-8 text-indigo-400" />
+                <Upload className="h-6 w-6" />
               )}
             </div>
 
             <div>
-              <p className="text-base font-semibold text-white">
-                {uploading ? 'Analyzing and parsing resume...' : 'Click to upload or drag & drop resume'}
+              <p className="text-sm font-semibold text-slate-800 dark:text-zinc-100">
+                {uploading ? 'Parsing resume document...' : 'Upload your resume'}
               </p>
-              <p className="text-xs text-slate-400 mt-1">
-                Supported formats: <span className="font-semibold text-slate-300">PDF (.pdf)</span> and <span className="font-semibold text-slate-300">Word (.docx)</span> up to 10MB
+              <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                Drag and drop or browse from your computer (PDF or DOCX, max 10MB)
               </p>
             </div>
 
             {uploading && (
-              <div className="w-full max-w-xs mt-2">
-                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-full max-w-xs mt-3">
+                <div className="h-1.5 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-300"
+                    className="h-full bg-blue-600 transition-all duration-300"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1">Extracting sections & formatting... {progress}%</p>
+                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1">Extracting text & sections... {progress}%</p>
               </div>
             )}
           </div>
         </div>
       ) : (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <FileText className="h-6 w-6" />
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <h4 className="font-semibold text-white text-sm">{uploadedResume.filename}</h4>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    PARSED
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  {(uploadedResume.file_size / 1024).toFixed(1)} KB • {uploadedResume.file_type.toUpperCase()} • {uploadedResume.text_length} characters parsed
-                </p>
-              </div>
+        <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+          <div className="flex items-center space-x-3 min-w-0">
+            <div className="h-10 w-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 flex items-center justify-center text-emerald-600 dark:text-emerald-400 flex-shrink-0">
+              <FileText className="h-5 w-5" />
             </div>
-
-            <button
-              onClick={onReset}
-              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
-              title="Remove and upload different file"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="min-w-0">
+              <div className="flex items-center space-x-2">
+                <p className="font-semibold text-slate-900 dark:text-zinc-100 text-sm truncate">{uploadedResume.filename}</p>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                  Ready
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                {(uploadedResume.file_size / 1024).toFixed(1)} KB &bull; {uploadedResume.file_type.toUpperCase()} &bull; {uploadedResume.text_length} chars extracted
+              </p>
+            </div>
           </div>
 
-          {/* Scanned warning */}
-          {uploadedResume.is_scanned && (
-            <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start space-x-3 text-amber-300 text-xs">
-              <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium">Scanned or Image-Based Document Detected</p>
-                <p className="text-amber-300/80 mt-0.5">
-                  Limited selectable text was detected. ATS parsers strongly favor native text documents over scanned images.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Detected sections pills */}
-          {uploadedResume.sections_detected && uploadedResume.sections_detected.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-slate-800/80">
-              <p className="text-xs text-slate-400 font-medium mb-2">Detected Resume Sections:</p>
-              <div className="flex flex-wrap gap-1.5">
-                {uploadedResume.sections_detected.map((sec, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-flex items-center space-x-1 text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700/60"
-                  >
-                    <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                    <span>{sec}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
+          <button
+            onClick={onReset}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition"
+            title="Replace resume"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       )}
 
       {error && (
-        <div className="mt-3 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center space-x-2">
-          <AlertTriangle className="h-4 w-4 shrink-0" />
-          <span>{error}</span>
-        </div>
+        <p className="text-xs text-rose-600 dark:text-rose-400 mt-2 font-medium">{error}</p>
       )}
     </div>
   );
 };
-

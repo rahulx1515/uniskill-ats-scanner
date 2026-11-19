@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Sparkles, Shield, User, Lock, Mail, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { Shield, User, Lock, Mail, ArrowRight, Loader2, AlertCircle, Sun, Moon } from 'lucide-react';
 
 export const LoginPage = () => {
   const { login } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -12,18 +14,17 @@ export const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('Please enter both Email/ID and Password.');
+      setError('Please enter your email and password.');
       return;
     }
 
     try {
       setLoading(true);
       setError(null);
-      const res = await login(email.trim(), password);
-      // Role is automatically stored and handled by AuthContext
+      await login(email.trim(), password);
     } catch (err) {
       console.error('Login error:', err);
-      const msg = err.response?.data?.detail || 'Invalid email or password. Please try again.';
+      const msg = err.response?.data?.detail || 'Invalid email or password.';
       setError(msg);
     } finally {
       setLoading(false);
@@ -37,45 +38,39 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background ambient light */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Top right theme toggle */}
+      <div className="absolute top-4 right-4">
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-lg text-slate-500 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-zinc-800 transition"
+          title="Toggle theme"
+        >
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </button>
+      </div>
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        {/* Brand Logo & Header */}
-        <div className="flex flex-col items-center text-center space-y-3">
-          <div className="flex items-center space-x-3">
-            <img
-              src="/uniskill-logo.png"
-              alt="UniSkill Logo"
-              className="h-12 w-auto object-contain rounded-xl shadow-lg shadow-indigo-500/20"
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
-            <div className="text-left">
-              <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-2xl tracking-tight text-white">UniSkill</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
-                  ATS PRO
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Career Intelligence Engine</p>
-            </div>
-          </div>
-
-          <h2 className="text-xl sm:text-2xl font-bold text-white mt-4 tracking-tight">
-            Sign In to UniSkill ATS
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        {/* Brand Header */}
+        <div className="flex flex-col items-center text-center space-y-2">
+          <img
+            src="/uniskill-logo.png"
+            alt="UniSkill Logo"
+            className="h-10 w-auto object-contain rounded-md"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Sign in to UniSkill ATS
           </h2>
-          <p className="text-xs text-slate-400 max-w-sm">
-            Enter your credentials. Your role (<strong className="text-indigo-400">Admin</strong> or <strong className="text-slate-300">Student</strong>) will be automatically detected.
+          <p className="text-xs text-slate-500 dark:text-zinc-400">
+            Enter your credentials to access your account
           </p>
         </div>
 
         {/* Card Form */}
-        <div className="mt-8 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/50 backdrop-blur-sm space-y-6">
+        <div className="mt-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-6 sm:p-7 shadow-sm space-y-5">
           {error && (
-            <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-start space-x-2.5 text-xs text-rose-400">
+            <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 flex items-start space-x-2 text-xs text-rose-700 dark:text-rose-300">
               <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -83,35 +78,35 @@ export const LoginPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block mb-1.5">
-                Email / User ID
+              <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block mb-1">
+                Email address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-zinc-500" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. rahul@uniskill.in"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                  placeholder="name@uniskill.in"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-600 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block mb-1.5">
+              <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block mb-1">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-zinc-500" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                  placeholder="••••••••"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-600 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
                 />
               </div>
             </div>
@@ -119,63 +114,57 @@ export const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center space-x-2 py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-700 disabled:to-slate-700 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 transition transform hover:-translate-y-0.5 disabled:translate-y-0 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm transition disabled:opacity-50"
             >
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Verifying Credentials...</span>
+                  <span>Signing in...</span>
                 </>
               ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight className="h-4 w-4" />
-                </>
+                <span>Continue</span>
               )}
             </button>
           </form>
 
-          {/* Quick Demo Credentials */}
-          <div className="pt-4 border-t border-slate-800/80 space-y-2.5">
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">
-              Quick One-Click Demo Access
+          {/* Quick Demo Access */}
+          <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 space-y-2">
+            <p className="text-[11px] font-medium text-slate-400 dark:text-zinc-500 text-center uppercase tracking-wider">
+              Demo Accounts
             </p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => fillCredentials('rahul@uniskill.in', '1234567890')}
-                className="flex flex-col items-start p-2.5 rounded-xl bg-indigo-500/5 hover:bg-indigo-500/15 border border-indigo-500/20 text-left transition group"
+                className="flex flex-col items-start p-2 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/60 text-left transition"
               >
-                <div className="flex items-center space-x-1.5 text-xs font-bold text-indigo-400">
-                  <Shield className="h-3 w-3" />
-                  <span>Admin Role</span>
-                </div>
-                <span className="text-[10px] text-slate-400 font-mono mt-0.5 truncate w-full">rahul@uniskill.in</span>
-                <span className="text-[9px] text-slate-500 font-mono">1234567890</span>
+                <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 flex items-center space-x-1">
+                  <Shield className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                  <span>Admin</span>
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-zinc-400 truncate w-full mt-0.5">rahul@uniskill.in</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fillCredentials('student@uniskill.in', 'student123')}
-                className="flex flex-col items-start p-2.5 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 text-left transition group"
+                className="flex flex-col items-start p-2 rounded-lg border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/60 text-left transition"
               >
-                <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-300">
-                  <User className="h-3 w-3 text-slate-400" />
-                  <span>Student Role</span>
-                </div>
-                <span className="text-[10px] text-slate-400 font-mono mt-0.5 truncate w-full">student@uniskill.in</span>
-                <span className="text-[9px] text-slate-500 font-mono">student123</span>
+                <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 flex items-center space-x-1">
+                  <User className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                  <span>Student</span>
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-zinc-400 truncate w-full mt-0.5">student@uniskill.in</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Footer info */}
-        <p className="text-center text-[11px] text-slate-600 mt-6">
-          UniSkill ATS Resume Intelligence Engine &bull; Official platform of <a href="https://uniskill.in" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">uniskill.in</a>
+        {/* Footer */}
+        <p className="text-center text-xs text-slate-400 dark:text-zinc-500 mt-6">
+          UniSkill ATS Resume Scanner &bull; <a href="https://uniskill.in" target="_blank" rel="noopener noreferrer" className="hover:underline">uniskill.in</a>
         </p>
       </div>
     </div>
   );
 };
-

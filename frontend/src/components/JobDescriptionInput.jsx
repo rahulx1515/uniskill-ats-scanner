@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { FileCode, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { FileCode, ChevronDown, ChevronUp } from 'lucide-react';
 
 const SAMPLE_JDS = [
   {
-    title: "FastAPI / Python Backend Engineer",
+    title: "Python Backend Engineer",
     text: `Job Title: Python Backend Engineer
 Location: Remote / Hybrid
 Experience: 2+ years of relevant experience
@@ -24,7 +24,7 @@ Preferred Skills:
 - Experience with Celery, Redis, AWS Cloud, and Linux.`
   },
   {
-    title: "Full Stack React & Node.js Developer",
+    title: "Full Stack Developer",
     text: `Job Title: Full Stack Developer
 Experience: 3+ years of experience
 Education: Bachelor's Degree in Computer Science
@@ -52,63 +52,67 @@ export const JobDescriptionInput = ({ customJd, setCustomJd }) => {
   };
 
   return (
-    <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 transition">
+    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm transition">
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
         <div className="flex items-center space-x-3">
-          <div className="h-9 w-9 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+          <div className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-zinc-800 flex items-center justify-center text-slate-700 dark:text-zinc-300">
             <FileCode className="h-4 w-4" />
           </div>
           <div>
-            <div className="flex items-center space-x-2">
-              <h4 className="text-sm font-semibold text-white">Target Job Description (Optional)</h4>
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
-                RECOMMENDED
+            <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100 flex items-center space-x-2">
+              <span>Paste Specific Job Description</span>
+              <span className="text-[10px] font-normal px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400">
+                Optional
               </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              Paste specific job description to extract bespoke technical requirements and compare.
+            </h4>
+            <p className="text-xs text-slate-500 dark:text-zinc-400">
+              Paste a custom job posting to extract and match exact role-specific keywords
             </p>
           </div>
         </div>
-
-        <button className="text-slate-400 hover:text-white p-1">
-          {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+        <button type="button" className="text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300">
+          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
       </div>
 
       {isOpen && (
-        <div className="mt-4 pt-4 border-t border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-slate-300">Job Description Text:</label>
-            <div className="flex items-center space-x-2">
-              <span className="text-[11px] text-slate-400">Insert Sample JD:</span>
-              {SAMPLE_JDS.map((s, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => loadSample(s)}
-                  className="text-[11px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 transition"
-                >
-                  {s.title.split(' ')[0]}
-                </button>
-              ))}
-            </div>
+        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-zinc-800 space-y-3">
+          <div className="flex flex-wrap gap-2 items-center text-xs">
+            <span className="text-slate-500 dark:text-zinc-400 text-[11px] font-medium">Sample JDs:</span>
+            {SAMPLE_JDS.map((s, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => loadSample(s)}
+                className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 text-xs font-medium transition"
+              >
+                {s.title}
+              </button>
+            ))}
           </div>
 
           <textarea
             rows={5}
             value={customJd}
             onChange={(e) => setCustomJd(e.target.value)}
-            placeholder="Paste job posting here (e.g. responsibilities, required qualifications, experience requirements)..."
-            className="w-full p-3.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono transition"
+            placeholder="Paste complete job description text here (including requirements, qualifications, and responsibilities)..."
+            className="w-full p-3 rounded-lg bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-xs text-slate-800 dark:text-zinc-200 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-600 dark:focus:border-blue-500"
           />
 
-          <p className="text-[11px] text-slate-500">
-            Tip: The engine extracts specific required years of experience, degrees, and technical libraries directly from this text and merges them with predefined role keywords.
-          </p>
+          {customJd && (
+            <div className="flex justify-between items-center text-[11px] text-slate-500 dark:text-zinc-400">
+              <span>{customJd.length} characters entered</span>
+              <button
+                type="button"
+                onClick={() => setCustomJd('')}
+                className="text-rose-600 dark:text-rose-400 hover:underline"
+              >
+                Clear JD
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 };
-

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  History, Trash2, Eye, BarChart3, ArrowRight, Loader2,
-  Calendar, FileText, Target, AlertTriangle, RefreshCw, ChevronDown, ChevronUp,
+  History, Trash2, Eye, BarChart3, Loader2,
+  Calendar, FileText, Target, AlertTriangle, RefreshCw,
   TrendingUp, TrendingDown, Minus, Download
 } from 'lucide-react';
 import { atsService } from '../services/api';
@@ -24,7 +24,7 @@ export const HistoryPage = ({ onViewAnalysis }) => {
       setHistory(data);
     } catch (err) {
       console.error('Failed to fetch history:', err);
-      setError('Failed to load analysis history. Please try again.');
+      setError('Failed to load analysis history.');
     } finally {
       setLoading(false);
     }
@@ -83,202 +83,142 @@ export const HistoryPage = ({ onViewAnalysis }) => {
   };
 
   const getScoreColor = (score) => {
-    if (score >= 80) return 'text-emerald-400';
-    if (score >= 60) return 'text-amber-400';
-    return 'text-rose-400';
+    if (score >= 80) return 'text-emerald-600 dark:text-emerald-400';
+    if (score >= 60) return 'text-amber-600 dark:text-amber-400';
+    return 'text-rose-600 dark:text-rose-400';
   };
 
   const getScoreBg = (score) => {
-    if (score >= 80) return 'bg-emerald-500/10 border-emerald-500/20';
-    if (score >= 60) return 'bg-amber-500/10 border-amber-500/20';
-    return 'bg-rose-500/10 border-rose-500/20';
-  };
-
-  const getDiffIcon = (diff) => {
-    if (diff > 0) return <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />;
-    if (diff < 0) return <TrendingDown className="h-3.5 w-3.5 text-rose-400" />;
-    return <Minus className="h-3.5 w-3.5 text-slate-500" />;
-  };
-
-  const getDiffColor = (diff) => {
-    if (diff > 0) return 'text-emerald-400';
-    if (diff < 0) return 'text-rose-400';
-    return 'text-slate-500';
+    if (score >= 80) return 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800';
+    if (score >= 60) return 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800';
+    return 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800';
   };
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <Loader2 className="h-8 w-8 text-indigo-400 animate-spin" />
-        <p className="text-sm text-slate-400">Loading analysis history...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-20 space-y-4">
-        <AlertTriangle className="h-10 w-10 text-rose-400 mx-auto" />
-        <p className="text-sm text-rose-400">{error}</p>
-        <button onClick={fetchHistory} className="inline-flex items-center space-x-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition">
-          <RefreshCw className="h-3.5 w-3.5" />
-          <span>Retry</span>
-        </button>
+      <div className="flex flex-col items-center justify-center py-20 space-y-3">
+        <Loader2 className="h-6 w-6 text-blue-600 dark:text-blue-400 animate-spin" />
+        <p className="text-xs text-slate-500 dark:text-zinc-400">Loading analysis history...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-extrabold text-white tracking-tight flex items-center space-x-2">
-            <History className="h-6 w-6 text-indigo-400" />
-            <span>Analysis History</span>
+          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Analysis History
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            {history.length} analysis {history.length === 1 ? 'record' : 'records'} found
+          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+            {history.length} {history.length === 1 ? 'record' : 'records'} logged
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2">
           <button
             onClick={() => { setCompareMode(!compareMode); setSelectedIds([]); setComparison(null); }}
-            className={`inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition ${
+            className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               compareMode
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800'
             }`}
           >
             <BarChart3 className="h-3.5 w-3.5" />
-            <span>{compareMode ? 'Exit Compare' : 'Compare Scores'}</span>
+            <span>{compareMode ? 'Cancel Compare' : 'Compare Two Runs'}</span>
           </button>
           <button
             onClick={fetchHistory}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 text-xs font-semibold transition"
+            className="p-1.5 rounded-lg bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 transition"
+            title="Refresh history"
           >
             <RefreshCw className="h-3.5 w-3.5" />
-            <span>Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* Compare bar */}
       {compareMode && (
-        <div className="flex items-center justify-between bg-indigo-500/5 border border-indigo-500/20 rounded-2xl p-4">
-          <p className="text-xs text-indigo-300">
-            {selectedIds.length === 0
-              ? 'Select two analyses to compare their scores.'
-              : selectedIds.length === 1
-              ? 'Select one more analysis to compare.'
-              : 'Two analyses selected. Click Compare to view differences.'}
-          </p>
+        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-lg p-3 text-xs">
+          <span className="text-blue-800 dark:text-blue-300">
+            {selectedIds.length === 0 ? 'Select two analyses below to view comparison.' : `${selectedIds.length} of 2 selected.`}
+          </span>
           <button
             onClick={handleCompare}
             disabled={selectedIds.length !== 2 || comparingLoading}
-            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white text-xs font-bold transition"
+            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-md text-xs transition"
           >
-            {comparingLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <BarChart3 className="h-3.5 w-3.5" />}
-            <span>{comparingLoading ? 'Comparing...' : 'Compare'}</span>
+            {comparingLoading ? 'Comparing...' : 'Compare'}
           </button>
         </div>
       )}
 
-      {/* Empty state */}
       {history.length === 0 ? (
-        <div className="text-center py-20 space-y-4">
-          <div className="h-16 w-16 mx-auto rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center">
-            <FileText className="h-8 w-8 text-slate-500" />
-          </div>
-          <h3 className="text-lg font-bold text-white">No Analyses Yet</h3>
-          <p className="text-sm text-slate-400 max-w-sm mx-auto">
-            Upload a resume and run your first ATS compatibility analysis to see your history here.
-          </p>
+        <div className="text-center py-16 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl space-y-2">
+          <FileText className="h-8 w-8 text-slate-400 dark:text-zinc-500 mx-auto" />
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">No analyses yet</h3>
+          <p className="text-xs text-slate-500 dark:text-zinc-400">Scan your first resume to track score history here.</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {history.map((item) => (
             <div
               key={item.id}
-              className={`group relative bg-slate-900/90 border rounded-2xl p-5 transition shadow-lg hover:border-indigo-500/40 ${
+              className={`bg-white dark:bg-zinc-900 border rounded-xl p-4 transition shadow-sm ${
                 compareMode && selectedIds.includes(item.id)
-                  ? 'border-indigo-500/60 bg-indigo-500/10'
-                  : 'border-white/10'
+                  ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-950/20'
+                  : 'border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
               }`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                {/* Left info */}
-                <div className="flex items-start space-x-4 flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center space-x-3 min-w-0">
                   {compareMode && (
-                    <button
-                      onClick={() => toggleCompareSelect(item.id)}
-                      className={`mt-1 h-5 w-5 rounded-md border flex-shrink-0 flex items-center justify-center transition ${
-                        selectedIds.includes(item.id)
-                          ? 'bg-indigo-600 border-indigo-500 text-white'
-                          : 'border-slate-500 hover:border-indigo-500'
-                      }`}
-                    >
-                      {selectedIds.includes(item.id) && (
-                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </button>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(item.id)}
+                      onChange={() => toggleCompareSelect(item.id)}
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    />
                   )}
 
-                  {/* Score badge */}
-                  <div className={`flex-shrink-0 h-14 w-14 rounded-xl border flex flex-col items-center justify-center ${getScoreBg(item.overall_score)}`}>
-                    <span className={`text-lg font-extrabold ${getScoreColor(item.overall_score)}`}>
+                  <div className={`h-11 w-11 rounded-lg border flex flex-col items-center justify-center flex-shrink-0 ${getScoreBg(item.overall_score)}`}>
+                    <span className={`text-base font-bold leading-none ${getScoreColor(item.overall_score)}`}>
                       {Math.round(item.overall_score)}
                     </span>
-                    <span className="text-[10px] text-slate-300 font-bold">/ 100</span>
+                    <span className="text-[9px] text-slate-500 dark:text-zinc-400 font-medium mt-0.5">/ 100</span>
                   </div>
 
-                  {/* Details */}
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-white truncate">{item.resume_filename}</p>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-slate-300">
-                      <span className="flex items-center space-x-1.5">
-                        <Target className="h-3.5 w-3.5 text-indigo-400" />
-                        <span className="font-semibold text-indigo-300">{item.job_role_title}</span>
-                      </span>
-                      <span className="flex items-center space-x-1.5 text-slate-300">
-                        <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                        <span>{new Date(item.created_at).toLocaleString()}</span>
-                      </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100 truncate">{item.resume_filename}</p>
+                    <div className="flex items-center space-x-2 text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                      <span className="font-medium text-slate-700 dark:text-zinc-300">{item.job_role_title}</span>
+                      <span>&bull;</span>
+                      <span>{new Date(item.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center space-x-2 flex-shrink-0">
+                <div className="flex items-center space-x-1.5 self-end sm:self-auto">
                   <button
                     onClick={() => handleViewAnalysis(item.id)}
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600/20 border border-indigo-500/20 text-xs font-semibold transition"
+                    className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition"
                   >
-                    <Eye className="h-3.5 w-3.5" />
-                    <span>View</span>
+                    View
                   </button>
                   <button
                     onClick={() => atsService.downloadReport(item.id, `UniSkill_ATS_${(item.job_role_title || 'Report').replace(/\s+/g, '_')}.pdf`)}
-                    title="Download Official PDF Report"
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 text-xs font-semibold transition"
+                    className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition flex items-center space-x-1"
                   >
-                    <Download className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">PDF</span>
+                    <Download className="h-3 w-3" />
+                    <span>PDF</span>
                   </button>
                   <button
                     onClick={() => handleDelete(item.resume_id)}
                     disabled={deletingId === item.resume_id}
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold transition disabled:opacity-50"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition"
+                    title="Delete"
                   >
-                    {deletingId === item.resume_id ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Trash2 className="h-3.5 w-3.5" />
-                    )}
-                    <span className="hidden sm:inline">Delete</span>
+                    {deletingId === item.resume_id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
@@ -287,45 +227,23 @@ export const HistoryPage = ({ onViewAnalysis }) => {
         </div>
       )}
 
-      {/* Comparison Results */}
       {comparison && (
-        <div className="bg-slate-900 border border-indigo-500/20 rounded-2xl p-6 space-y-4">
-          <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-            <BarChart3 className="h-4 w-4 text-indigo-400" />
-            <span>Score Comparison</span>
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Analysis A */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Analysis A</p>
-              <p className="text-xs text-slate-300 font-semibold truncate">{comparison.analysis_a?.resume_filename}</p>
-              <p className="text-[11px] text-slate-400">{comparison.analysis_a?.job_role_title}</p>
-              <div className={`text-2xl font-extrabold ${getScoreColor(comparison.analysis_a?.overall_score || 0)}`}>
-                {Math.round(comparison.analysis_a?.overall_score || 0)}
-              </div>
+        <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-5 space-y-3">
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">Comparison Result</h3>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="p-3 bg-slate-50 dark:bg-zinc-950 rounded-lg border border-slate-100 dark:border-zinc-800">
+              <p className="text-xs text-slate-500 dark:text-zinc-400 truncate">{comparison.analysis_a?.resume_filename}</p>
+              <p className="text-lg font-bold text-slate-900 dark:text-zinc-100 mt-1">{Math.round(comparison.analysis_a?.overall_score || 0)}</p>
             </div>
-
-            {/* Diff */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col items-center justify-center space-y-2">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Difference</p>
-              <div className="flex items-center space-x-2">
-                {getDiffIcon(comparison.score_diff || 0)}
-                <span className={`text-2xl font-extrabold ${getDiffColor(comparison.score_diff || 0)}`}>
-                  {comparison.score_diff > 0 ? '+' : ''}{(comparison.score_diff || 0).toFixed(1)}
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-500">points</p>
+            <div className="p-3 bg-slate-50 dark:bg-zinc-950 rounded-lg border border-slate-100 dark:border-zinc-800 flex flex-col justify-center">
+              <span className="text-xs text-slate-500 dark:text-zinc-400">Score Diff</span>
+              <span className={`text-lg font-bold mt-1 ${comparison.score_diff >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                {comparison.score_diff > 0 ? '+' : ''}{(comparison.score_diff || 0).toFixed(1)}
+              </span>
             </div>
-
-            {/* Analysis B */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Analysis B</p>
-              <p className="text-xs text-slate-300 font-semibold truncate">{comparison.analysis_b?.resume_filename}</p>
-              <p className="text-[11px] text-slate-400">{comparison.analysis_b?.job_role_title}</p>
-              <div className={`text-2xl font-extrabold ${getScoreColor(comparison.analysis_b?.overall_score || 0)}`}>
-                {Math.round(comparison.analysis_b?.overall_score || 0)}
-              </div>
+            <div className="p-3 bg-slate-50 dark:bg-zinc-950 rounded-lg border border-slate-100 dark:border-zinc-800">
+              <p className="text-xs text-slate-500 dark:text-zinc-400 truncate">{comparison.analysis_b?.resume_filename}</p>
+              <p className="text-lg font-bold text-slate-900 dark:text-zinc-100 mt-1">{Math.round(comparison.analysis_b?.overall_score || 0)}</p>
             </div>
           </div>
         </div>
@@ -333,4 +251,3 @@ export const HistoryPage = ({ onViewAnalysis }) => {
     </div>
   );
 };
-
