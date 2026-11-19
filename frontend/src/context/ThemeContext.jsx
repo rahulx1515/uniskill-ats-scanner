@@ -2,25 +2,53 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
+const applyThemeToDOM = (themeName) => {
+  const root = document.documentElement;
+  const body = document.body;
+  if (themeName === 'dark') {
+    root.classList.add('dark');
+    root.classList.remove('light');
+    if (body) {
+      body.classList.add('dark');
+      body.classList.remove('light');
+    }
+  } else {
+    root.classList.remove('dark');
+    root.classList.add('light');
+    if (body) {
+      body.classList.remove('dark');
+      body.classList.add('light');
+    }
+  }
+};
+
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('uniskill_theme') || 'dark';
+    try {
+      const saved = localStorage.getItem('uniskill_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+      return 'dark';
+    } catch (e) {
+      return 'dark';
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('uniskill_theme', theme);
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
+    try {
+      localStorage.setItem('uniskill_theme', theme);
+    } catch (e) {}
+    applyThemeToDOM(theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem('uniskill_theme', next);
+      } catch (e) {}
+      applyThemeToDOM(next);
+      return next;
+    });
   };
 
   return (
@@ -31,4 +59,5 @@ export const ThemeProvider = ({ children }) => {
 };
 
 export const useTheme = () => useContext(ThemeContext);
+
 

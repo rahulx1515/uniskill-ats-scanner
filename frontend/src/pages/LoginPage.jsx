@@ -42,11 +42,25 @@ export const LoginPage = () => {
       {/* Top right theme toggle */}
       <div className="absolute top-4 right-4">
         <button
-          onClick={toggleTheme}
-          className="p-2 rounded-lg text-slate-500 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-zinc-800 transition"
-          title="Toggle theme"
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            toggleTheme();
+          }}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs font-semibold text-slate-800 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition cursor-pointer shadow-xs"
+          title="Toggle light/dark theme"
         >
-          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {isDark ? (
+            <>
+              <Sun className="h-4 w-4 text-amber-400" />
+              <span>Light Mode</span>
+            </>
+          ) : (
+            <>
+              <Moon className="h-4 w-4 text-slate-700" />
+              <span>Dark Mode</span>
+            </>
+          )}
         </button>
       </div>
 

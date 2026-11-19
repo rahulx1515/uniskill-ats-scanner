@@ -139,18 +139,26 @@ export const Sidebar = ({ currentTab, setCurrentTab, mobileOpen, setMobileOpen }
         <div className="p-3 border-t border-slate-200 dark:border-zinc-800 space-y-2">
           {/* Light / Dark Mode Toggle */}
           <button
-            onClick={toggleTheme}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              toggleTheme();
+            }}
+            className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/60 hover:bg-slate-100 dark:hover:bg-zinc-800 transition cursor-pointer"
           >
             <div className="flex items-center space-x-2">
               {isDark ? (
-                <Moon className="h-4 w-4 text-zinc-400" />
+                <Sun className="h-4 w-4 text-amber-400" />
               ) : (
-                <Sun className="h-4 w-4 text-amber-500" />
+                <Moon className="h-4 w-4 text-slate-700" />
               )}
-              <span>{isDark ? 'Dark Mode' : 'Light Mode'}</span>
+              <span className="font-medium text-slate-800 dark:text-zinc-200">
+                {isDark ? 'Switch to Light' : 'Switch to Dark'}
+              </span>
             </div>
-            <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-mono">Toggle</span>
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-300 font-mono">
+              {isDark ? 'DARK' : 'LIGHT'}
+            </span>
           </button>
 
           {/* User info card */}

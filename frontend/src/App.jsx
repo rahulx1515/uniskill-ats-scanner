@@ -102,9 +102,13 @@ function App() {
           {/* Quick status & profile pill */}
           <div className="flex items-center space-x-2.5">
             <button
-              onClick={toggleTheme}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleTheme();
+              }}
               title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition flex items-center space-x-1.5 text-xs font-medium shadow-xs"
+              className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-700 transition flex items-center space-x-1.5 text-xs font-medium shadow-xs cursor-pointer"
             >
               {isDark ? (
                 <>
